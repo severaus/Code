@@ -6,14 +6,14 @@ nohup fastqc -f fastq -o 自建文件夹 file1 file2 file3 file4 &   #fastqc命�
 5.	QC   ~24hff
 Fastqc后由结果可以看出，后面有些reads结果不好，而且有些有很多N片段，所以需要去除，利用NGSQCToolkit_v2.3.3软件（http://blog.csdn.net/shmilyringpull/article/details/9225195）进行QC和trim。
 首先利用IlluQC.pl 用于Illumina reads的QC。默认情况下去除掉含有primer/adaptor的reads和低质量的reads，并给出统计结果和6种图形结果。默认设置 (‘-s’ 参数) 碱基质量低于20的为低质量碱基；默认设置 ( ‘-l’ 参数)低质量碱基在reads中比例 >30% 的为低质量reads。本程序运行命令：
-nohup perl /home/liul/software/NGSQCToolkit_v2.3.3/QC/IlluQC.pl -pe C1_R1.fastq C1_R2.fastq 2 A -p 2 -l 70 -s 20 -o C1_IlluQC &
+nohup perl /home/lwl/software/NGSQCToolkit_v2.3.3/QC/IlluQC.pl -pe C1_R1.fastq C1_R2.fastq 2 A -p 2 -l 70 -s 20 -o C1_IlluQC &
 
-nohup perl /home/liul/software/NGSQCToolkit_v2.3.3/QC/IlluQC.pl -pe F0C1_R1 F0C1_R2 2 A -p 4 -l 70 -s 20 -o F0C1_IlluQC &
+nohup perl /home/lwl/software/NGSQCToolkit_v2.3.3/QC/IlluQC.pl -pe F0C1_R1 F0C1_R2 2 A -p 4 -l 70 -s 20 -o F0C1_IlluQC &
 
 再次，利用TrimmingReads.pl进行trim，（~2h）从3’端进行去掉碱基质量低于20的低质量碱基，去掉长度小于70的小片段。本程序运行命令：
-nohup perl /home/liul/software/NGSQCToolkit_v2.3.3/Trimming/TrimmingReads.pl -i C1_R1.fastq_filtered -irev C1_R2.fastq_filtered -q 20 -n 70 -o C1_TrimmingReads &
+nohup perl /home/lwl/software/NGSQCToolkit_v2.3.3/Trimming/TrimmingReads.pl -i C1_R1.fastq_filtered -irev C1_R2.fastq_filtered -q 20 -n 70 -o C1_TrimmingReads &
 
-nohup perl /home/liul/software/NGSQCToolkit_v2.3.3/Trimming/TrimmingReads.pl -i F0C1_R1_filtered -irev F0C1_R2_filtered -q 20 -n 70 -o F0C1_TrimmingReads &
+nohup perl /home/lwl/software/NGSQCToolkit_v2.3.3/Trimming/TrimmingReads.pl -i F0C1_R1_filtered -irev F0C1_R2_filtered -q 20 -n 70 -o F0C1_TrimmingReads &
 
 QC建议用Trimmomatic进行，一步到位，省时间，这个软件（7806, bioinformatics）比NGS（1095，plos one）那个引用率高了6711次
 nohup java -jar /mnt/disk0/leil/software/Trimmomatic-0-2.38/trimmomatic-0.38.jar PE -phred33 F0C1_1.fq.gz F0C1_2.fq.gz F0C1_R1.fq.gz F0C1_R1un.fq.gz F0C1_R2.fq.gz F0C1_R2un.fq.gz ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 &
@@ -62,7 +62,7 @@ Create a file called assemblies.txt that lists the assembly file for each sample
 ./C1_R3_clout/transcripts.gtf
 ./C2_R3_clout/transcripts.gtf 
 cuffmerge -o @@ -g genes.gtf -s genome.fa -p 8 assemblies.txt
-nohup cuffmerge -o /diskd/liul/RNAseq_raw_data/cuffmerge -g /diskd/liul/refergenome/Gallus_gallus.Galgal4.83.gtf -s /diskd/liul/refergenome/Gallus.fa -p 15 /diskd/liul/RNAseq_raw_data/cuffmerge/assemblies.txt &
+nohup cuffmerge -o /diskd/lwl/RNAseq_raw_data/cuffmerge -g /diskd/lwl/refergenome/Gallus_gallus.Galgal4.83.gtf -s /diskd/lwl/refergenome/Gallus.fa -p 15 /diskd/lwl/RNAseq_raw_data/cuffmerge/assemblies.txt &
 
 
 14.	perl summary_gtf.pl combined.gtf 200 2 length_exon.txt  
